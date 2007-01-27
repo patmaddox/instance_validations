@@ -1,0 +1,29 @@
+InstanceValidations
+===================
+
+ActiveRecord lets you define validations at the class level.  This plugin lets you define validations for ActiveRecord instances.  Take the following ActiveRecord class:
+
+  class Chicken < ActiveRecord::Base
+    include InstanceValidations
+    # Has two columns, name and home_town.  Only validate name
+    validates_presence_of :name
+  end
+
+All instances of Chicken will require a name in order to be valid.  If you don't define any instance validations, you'll get the expected behavior:
+
+  chicken = Chicken.new
+  chicken.valid?     => false, will have an error on name
+  
+If you do specify instance validations, the class validations are ignored and only instance validations are used:
+
+  chicken_without_a_name = Chicken.new
+  class << chicken_without_a_name
+    validates_presence_of :home_town
+  end
+  chicken_without_a_name.valid?                 # => false, will have an error on home_town but not name
+  chicken_without_a_name.home_town = "Roostershire"
+  chicken_without_a_name.valid?                 # => true
+  
+  
+Written by Pat Maddox.  Released under the MIT License.
+svn://evang.eli.st/public/plugins/instance_validations
